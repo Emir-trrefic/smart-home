@@ -2,7 +2,7 @@
 
 Evdeki akıllı cihazları (klima, LED ışık, robot süpürge, priz vb.) tek yerden yöneten, evin 3D modeli üzerinden oyun gibi kontrol edilen uygulama. Telefondan ve bilgisayardan aynı arayüzle çalışır.
 
-> Durum: iskelet aşaması. Henüz çalışan kod yok, yapı ve plan hazır.
+> Durum: mimari ve sunucu temeli yazıldı. Sunucunun bir kısmı testlerle doğrulandı, bir kısmı CI'da ilk kez çalışacak. 3D arayüz ve iOS tarayıcı henüz yok. Ayrıntı: [docs/security.md](docs/security.md) sonundaki durum tablosu.
 
 ## Hedefler
 
@@ -20,14 +20,15 @@ Evdeki akıllı cihazları (klima, LED ışık, robot süpürge, priz vb.) tek y
   (PWA)                API + WebSocket           Wi-Fi, IR               robot, priz
 ```
 
-Ayrıntı: [docs/architecture.md](docs/architecture.md)
+Ayrıntı: [docs/architecture.md](docs/architecture.md), [docs/security.md](docs/security.md), [docs/data-model.md](docs/data-model.md), [docs/decisions.md](docs/decisions.md)
 
 ## Klasör yapısı
 
 | Klasör | İçerik |
 |---|---|
+| `apps/scanner-ios/` | LiDAR'lı iPhone'da RoomPlan ile ev tarama uygulaması (planlı) |
 | `apps/web/` | Three.js + React 3D arayüz (PWA, bilgisayar ve telefon) |
-| `server/` | Arayüz ile Home Assistant arasındaki API katmanı |
+| `server/` | Gateway sunucu: kimlik, yetki, komut politikası, Home Assistant köprüsü |
 | `homeassistant/` | Home Assistant yapılandırma notları ve örnekleri |
 | `firmware/esp32/` | ESP32 + MQTT ile kendi yapacağımız cihazlar (LED şerit, IR verici) |
 | `assets/models/` | Evin 3D modeli (`.glb`) |
