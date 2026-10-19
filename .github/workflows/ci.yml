@@ -21,8 +21,23 @@ jobs:
           node-version: 22
       # Kilit dosyası henüz yok, ilk yeşil çalışmadan sonra package-lock.json eklenip `npm ci` kullanılacak.
       - run: npm install --no-audit --no-fund
-      - run: npm run typecheck
-      - run: npm test
+      # Hata çıktısı tek bir annotation olarak da yazılır, böylece loglara erişemeyen araçlar da okuyabilir.
+      - name: Typecheck
+        run: |
+          if ! npm run typecheck > "$RUNNER_TEMP/typecheck.log" 2>&1; then
+            cat "$RUNNER_TEMP/typecheck.log"
+            msg=$(head -c 3000 "$RUNNER_TEMP/typecheck.log" | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=typecheck::${msg}"
+            exit 1
+          fi
+      - name: Test
+        run: |
+          if ! npm test > "$RUNNER_TEMP/test.log" 2>&1; then
+            tail -n 80 "$RUNNER_TEMP/test.log"
+            msg=$(grep -E '^(not ok|# fail|# pass)|Error|error:' "$RUNNER_TEMP/test.log" | head -c 3000 | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=test::${msg}"
+            exit 1
+          fi
 
   secret-scan:
     runs-on: ubuntu-latest
