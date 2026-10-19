@@ -1,0 +1,20 @@
+# Bağımlılıklar
+node_modules/
+.venv/
+__pycache__/
+
+# Derleme çıktıları
+dist/
+build/
+*.log
+
+# Gizli bilgiler
+.env
+.env.*
+!.env.example
+secrets.yaml
+
+# Editör ve sistem dosyaları
+.DS_Store
+.idea/
+.vscode/
