@@ -55,6 +55,15 @@ function sha256(value: string): Buffer {
   return createHash("sha256").update(value).digest();
 }
 
+/** Fastify hata nesnesinden HTTP durum kodunu güvenle okur, bulamazsa 500 döner. */
+function statusOf(error: unknown): number {
+  if (typeof error === "object" && error !== null && "statusCode" in error) {
+    const code = (error as { statusCode: unknown }).statusCode;
+    if (typeof code === "number") return code;
+  }
+  return 500;
+}
+
 /** Sabit sürede karşılaştırma (uzunluk bilgisi de sızmasın diye önce hash'lenir). */
 function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(sha256(a), sha256(b));
@@ -77,7 +86,7 @@ export async function buildApp(config: Config, deps: AppDeps): Promise<FastifyIn
   await app.register(rateLimit, { max: 120, timeWindow: "1 minute" });
 
   app.setErrorHandler((error, request, reply) => {
-    const status = typeof error.statusCode === "number" ? error.statusCode : 500;
+    const status = statusOf(error);
     if (status >= 500) {
       request.log.error({ err: error }, "unhandled error");
       return reply.code(500).send({ error: "internal_error" });
