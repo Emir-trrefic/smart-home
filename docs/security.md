@@ -61,10 +61,10 @@ Sunucu bu komutu HA servis çağrısına çevirir. Alan adı, servis adı ve ent
 | Komut izinli listesi ve rol izinleri (`policy`) | Kodda, testler çalıştırıldı ve geçti |
 | Tarama şeması doğrulama | Kodda, testler çalıştırıldı ve geçti |
 | HA REST istemcisi | Kodda, sahte fetch ile testler geçti, gerçek HA ile denenmedi |
-| Kısa ömürlü JWT (imza, süre, `alg:none` reddi) | Kodda, testler yazıldı ama henüz çalıştırılmadı |
-| HTTP uçları: ilk kurulum belirteci, giriş, hız sınırı, güvenlik başlıkları, rol kontrolü | Kodda, testler yazıldı ama henüz çalıştırılmadı |
+| Kısa ömürlü JWT (imza, süre, `alg:none` reddi) | Kodda, testler GitHub Actions'ta geçti |
+| HTTP uçları: ilk kurulum belirteci, giriş, hız sınırı, güvenlik başlıkları, rol kontrolü | Kodda, testler GitHub Actions'ta geçti |
 
-> "Henüz çalıştırılmadı" olanlar `jose` ve `fastify` paketleri gerektiriyor. Geliştirme ortamından paket kayıt sunucusuna erişilemediği için bunlar GitHub Actions ile ilk kez GitHub'da çalışacak (`.github/workflows/ci.yml`). CI yeşil olmadan bu satırlar doğrulanmış sayılmaz.
+> Tip kontrolü ve tüm testler GitHub Actions'ta yeşil (`.github/workflows/ci.yml`, commit `c8d7087`). Testler birim ve `inject` tabanlı entegrasyon testleridir. Gerçek Home Assistant, gerçek ağ ve gerçek cihazla denenmedi, güvenlik incelemesi veya sızma testi yapılmadı.
 | Kalıcı veritabanı | Planlı (şu an bellekte) |
 | Yenileme belirteci, passkey | Planlı |
 | Cihaz eşleşmesi (QR) | Planlı |

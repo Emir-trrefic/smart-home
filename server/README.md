@@ -41,4 +41,4 @@ Tasarım ve güvenlik: [../docs/security.md](../docs/security.md)
 
 ## Durum
 
-Veri şimdilik bellekte, sunucu yeniden başlayınca silinir. Testlerin hangilerinin çalıştırıldığı `docs/security.md` sonundaki tabloda.
+Veri şimdilik bellekte, sunucu yeniden başlayınca silinir. Güvenlik önlemlerinin durumu `docs/security.md` sonundaki tabloda.

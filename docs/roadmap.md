@@ -4,7 +4,8 @@
 
 - [x] Mimari, güvenlik, veri modeli ve karar dokümanları
 - [x] Sunucu iskeleti: kimlik doğrulama, komut izinli listesi, tarama şeması, HA REST istemcisi
-- [ ] CI'da tüm testlerin yeşil çalışması (JWT ve HTTP uç testleri henüz hiç çalıştırılmadı)
+- [x] CI'da tip kontrolü ve tüm testler yeşil
+- [ ] `package-lock.json` ekle ve CI'da `npm ci` kullan
 - [ ] Kalıcı veritabanı, yenileme belirteci, denetim günlüğü
 - [ ] `apps/scanner-ios`: RoomPlan ile çok odalı tarama ve JSON dışa aktarma (Xcode yöntemi seçilince)
 - [ ] Cihaz eşleşmesi (tek kullanımlık QR kodu)

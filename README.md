@@ -2,7 +2,7 @@
 
 Evdeki akıllı cihazları (klima, LED ışık, robot süpürge, priz vb.) tek yerden yöneten, evin 3D modeli üzerinden oyun gibi kontrol edilen uygulama. Telefondan ve bilgisayardan aynı arayüzle çalışır.
 
-> Durum: mimari ve sunucu temeli yazıldı. Sunucunun bir kısmı testlerle doğrulandı, bir kısmı CI'da ilk kez çalışacak. 3D arayüz ve iOS tarayıcı henüz yok. Ayrıntı: [docs/security.md](docs/security.md) sonundaki durum tablosu.
+> Durum: mimari ve sunucu temeli yazıldı, CI'da tip kontrolü ve testler yeşil. 3D arayüz ve iOS tarayıcı henüz yok. Ayrıntı: [docs/security.md](docs/security.md) sonundaki durum tablosu.
 
 ## Hedefler
 
