@@ -1,20 +1,14 @@
 import { z } from "zod";
+import { IdSchema, NameSchema } from "./ids.js";
+import { MetersSchema, Vec2Schema, Vec3Schema } from "./geometry.js";
 
-const id = z.string().regex(/^[A-Za-z0-9_-]{1,64}$/);
 const finite = z.number().finite();
-const meters = z.number().finite().min(0).max(100);
-const vec2 = z.tuple([finite.min(-1000).max(1000), finite.min(-1000).max(1000)]);
-const vec3 = z.tuple([
-  finite.min(-1000).max(1000),
-  finite.min(-1000).max(1000),
-  finite.min(-1000).max(1000),
-]);
 
 const wall = z
   .object({
-    id,
-    start: vec2,
-    end: vec2,
+    id: IdSchema,
+    start: Vec2Schema,
+    end: Vec2Schema,
     thickness: z.number().finite().min(0.01).max(2),
     height: z.number().finite().min(0.5).max(20),
   })
@@ -22,22 +16,22 @@ const wall = z
 
 const opening = z
   .object({
-    id,
-    wallId: id,
-    offset: meters,
+    id: IdSchema,
+    wallId: IdSchema,
+    offset: MetersSchema,
     width: z.number().finite().min(0.1).max(20),
     height: z.number().finite().min(0.1).max(20),
   })
   .strict();
 
-const windowSchema = opening.extend({ sill: meters.default(0) }).strict();
+const windowSchema = opening.extend({ sill: MetersSchema.default(0) }).strict();
 
 const object = z
   .object({
-    id,
+    id: IdSchema,
     category: z.string().regex(/^[a-z0-9_]{1,40}$/),
-    position: vec3,
-    dimensions: vec3,
+    position: Vec3Schema,
+    dimensions: Vec3Schema,
     rotationY: finite.min(-Math.PI * 2).max(Math.PI * 2).default(0),
     confidence: z.enum(["low", "medium", "high"]),
   })
@@ -45,9 +39,9 @@ const object = z
 
 const room = z
   .object({
-    id,
-    name: z.string().trim().min(1).max(80),
-    levelId: id,
+    id: IdSchema,
+    name: NameSchema,
+    levelId: IdSchema,
     height: z.number().finite().min(0.5).max(20),
     walls: z.array(wall).max(200),
     doors: z.array(opening).max(50),
@@ -56,11 +50,9 @@ const room = z
   })
   .strict();
 
-const level = z
-  .object({ id, name: z.string().trim().min(1).max(80), elevation: finite.min(-100).max(500) })
-  .strict();
+const level = z.object({ id: IdSchema, name: NameSchema, elevation: finite.min(-100).max(500) }).strict();
 
-/** Tarama yükü şeması, bkz. docs/data-model.md. Sürüm 1. */
+/** Tarama yükü, sürüm 1. Bkz. docs/data-model.md. */
 export const ScanUploadSchema = z
   .object({
     version: z.literal(1),

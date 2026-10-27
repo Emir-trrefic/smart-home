@@ -9,11 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  server:
+  checks:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: server
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,11 +30,12 @@ jobs:
       - name: Test
         run: |
           if ! npm test > "$RUNNER_TEMP/test.log" 2>&1; then
-            tail -n 80 "$RUNNER_TEMP/test.log"
+            tail -n 120 "$RUNNER_TEMP/test.log"
             msg=$(grep -E '^(not ok|# fail|# pass)|Error|error:' "$RUNNER_TEMP/test.log" | head -c 3000 | sed ':a;N;$!ba;s/\n/%0A/g')
             echo "::error title=test::${msg}"
             exit 1
           fi
+          grep -E '^# (tests|pass|fail)' "$RUNNER_TEMP/test.log"
 
   secret-scan:
     runs-on: ubuntu-latest

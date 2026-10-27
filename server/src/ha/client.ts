@@ -1,4 +1,9 @@
-import type { HaServiceCall } from "../policy/commands.js";
+/** Home Assistant'a gönderilecek servis çağrısı. */
+export interface HaServiceCall {
+  domain: string;
+  service: string;
+  data: Record<string, unknown>;
+}
 
 export interface HaClient {
   callService(call: HaServiceCall): Promise<void>;

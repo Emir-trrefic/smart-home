@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ScanUploadSchema } from "../src/scan/schema.js";
+import { ScanUploadSchema } from "../src/index.js";
 import { validScan } from "./fixtures.js";
 
 const clone = () => structuredClone(validScan) as typeof validScan & Record<string, unknown>;

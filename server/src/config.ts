@@ -6,8 +6,6 @@ const schema = z.object({
   HOST: z.string().min(1).default("127.0.0.1"),
   JWT_SECRET: z.string().min(32),
   BOOTSTRAP_TOKEN: z.string().min(24),
-  HA_URL: z.string().url().optional(),
-  HA_TOKEN: z.string().min(1).optional(),
 });
 
 export type Config = z.infer<typeof schema>;

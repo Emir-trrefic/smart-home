@@ -1,11 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 
-export const ROLES = ["owner", "member", "guest"] as const;
-export type Role = (typeof ROLES)[number];
-
+/** Belirteç yalnızca kimliği taşır. Roller mekân başınadır ve her istekte üyelikten okunur. */
 export interface Claims {
   sub: string;
-  role: Role;
 }
 
 const ISSUER = "smart-home";
@@ -16,13 +13,9 @@ function keyOf(secret: string): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-function isRole(value: unknown): value is Role {
-  return typeof value === "string" && (ROLES as readonly string[]).includes(value);
-}
-
 export async function signAccessToken(secret: string, claims: Claims, ttlSeconds = 900): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
-  return new SignJWT({ role: claims.role })
+  return new SignJWT({})
     .setProtectedHeader({ alg: ALGORITHM })
     .setSubject(claims.sub)
     .setIssuer(ISSUER)
@@ -39,8 +32,8 @@ export async function verifyAccessToken(secret: string, token: string): Promise<
     audience: AUDIENCE,
     algorithms: [ALGORITHM],
   });
-  if (typeof payload.sub !== "string" || !isRole(payload.role)) {
+  if (typeof payload.sub !== "string" || payload.sub.length === 0) {
     throw new Error("Geçersiz belirteç içeriği");
   }
-  return { sub: payload.sub, role: payload.role };
+  return { sub: payload.sub };
 }
