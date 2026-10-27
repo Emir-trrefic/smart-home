@@ -91,6 +91,7 @@ Kayıtta ayrıca tür ile sağlayıcı alanı eşleşmesi zorunludur: `light` t�
 | `GET /places/:placeId/devices` | üye (rolün kontrol edebildiği türler) |
 | `POST /places/:placeId/devices/:deviceId/command` | üye (rol izni kataloğa göre) |
 | `POST /places/:placeId/scans`, `GET /places/:placeId/scans` | owner, member |
+| `GET /places/:placeId/scans/latest` | owner, member, guest (3D görünüm) |
 
 ## Sürümleme
 
