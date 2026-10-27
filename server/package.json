@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@fastify/helmet": "^13.0.0",
-    "@fastify/rate-limit": "^10.0.0",
+    "@fastify/rate-limit": "^11.2.1",
     "@smart-home/domain": "*",
     "fastify": "^5.0.0",
     "jose": "^6.0.0",
