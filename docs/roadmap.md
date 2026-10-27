@@ -1,23 +1,46 @@
 # Yol haritası
 
-## Aşama 0: mimari ve güvenlik temeli (şu an)
+Öncelik: **mobil uygulama**. Sunucu ve ortak model, mobilin dayanacağı sözleşmeyi sağlıyor.
 
-- [x] Mimari, güvenlik, veri modeli ve karar dokümanları
-- [x] Sunucu iskeleti: kimlik doğrulama, komut izinli listesi, tarama şeması, HA REST istemcisi
-- [x] CI'da tip kontrolü ve tüm testler yeşil
-- [ ] `package-lock.json` ekle ve CI'da `npm ci` kullan
-- [ ] Kalıcı veritabanı, yenileme belirteci, denetim günlüğü
-- [ ] `apps/scanner-ios`: RoomPlan ile çok odalı tarama ve JSON dışa aktarma (Xcode yöntemi seçilince)
-- [ ] Cihaz eşleşmesi (tek kullanımlık QR kodu)
+## Aşama 0: temel (tamamlandı)
 
-## Sonraki aşamalar (ilk plan)
+- [x] Mimari, güvenlik, veri modeli, karar, entegrasyon ve gizlilik dokümanları
+- [x] `packages/domain`: mekân, rol, tarama, cihaz, komut kataloğu (8 cihaz türü)
+- [x] Sunucu: kimlik, mekân başına üyelik ve roller, davetle katılım, kiracı izolasyonu, cihaz kaydı, komut çözümü, tarama yükleme
+- [x] CI: tip kontrolü, testler, gizli bilgi taraması
 
-- [ ] **Hafta 1-2:** Home Assistant kurulumu, 1-2 cihaz bağlama (LED, priz)
-- [ ] **Hafta 3:** Basit web paneli ile cihazları API üzerinden aç/kapat
-- [ ] **Hafta 4-5:** Evin 3D modelini hazırla, Three.js sahnesine yükle
-- [ ] **Hafta 6-7:** Nesnelere tıklama, kontrol menüleri, gerçek zamanlı durum senkronu
-- [ ] **Hafta 8+:** Robot süpürge haritası, otomasyonlar, sesli komut, güvenlik sertleştirme
+## Aşama 1: mobil temel
+
+- [ ] **Karar:** mobil çatı onayı (Expo önerisi, bkz. `apps/mobile/README.md`) ve derleme yolu (EAS bulut derlemesi ve hesaplar)
+- [ ] **3D deneme (spike):** gerçek iPhone ve Android'de react-three-fiber ile örnek ev sahnesi, kare hızı ve dokunma ölçümü
+- [ ] Mobil iskelet: giriş, mekân listesi, mekân görünümü, cihaz paneli (yeteneklerden çizilen kontroller), üyeler ve davet
+- [ ] Kalıcı veritabanı seçimi ve geçişi
+- [ ] `package-lock.json` ve CI'da `npm ci`
+
+## Aşama 2: gerçek cihazlar
+
+- [ ] Bridge aracısı tasarımı, güvenlik incelemesi ve yazımı
+- [ ] Home Assistant ile uçtan uca deneme (ışık, klima, TV, robot)
+- [ ] Cihaz keşfi: HA varlıklarını listeleme, owner onayı ile tür, oda ve konum atama
+- [ ] Cihaz durumu: olay akışı (WebSocket) ve gerekirse anlık bildirim
+- [ ] Kalorifer için güvenlik değerlendirmesi (sınırlar, kombi uyumu)
+
+## Aşama 3: ev tarama ve 3D
+
+- [ ] iOS tarayıcı (`apps/scanner-ios`): RoomPlan, çok odalı birleştirme, JSON dışa aktarma
+- [ ] Tarama sonrası düzenleme: oda adı, cihaz yerleşimi (yapay zeka önerisi opsiyonel)
+- [ ] 3D sahne çizimi, cihaz etkileşimi ve görsel geri bildirim (klima efekti, TV ışığı vb.)
+- [ ] Robot haritası ve konumu (özel geliştirme)
+
+## Aşama 4: ürünleşme
+
+- [ ] Açık kayıt, e-posta doğrulama, parola sıfırlama, yenileme belirteci, passkey
+- [ ] Hesap ve mekân silme, sahiplik devri
+- [ ] KVKK: hukuki görüş, aydınlatma ve (gerekirse) açık rıza metinleri, saklama süreleri
+- [ ] Matter doğrudan ekleme (iOS MatterSupport, Android Google Home APIs) ve bulut sağlayıcı entegrasyonları
+- [ ] Web ve masaüstü istemci
+- [ ] Bağımsız güvenlik incelemesi ve sızma testi
 
 ## İlke
 
-Küçük başla: önce tek odada, tek cihazla çalışan bir prototip. Sonra odaları ve cihazları ekle.
+Küçük başla: önce tek mekân, tek cihazla uçtan uca çalışan dilim. Sonra türleri, sağlayıcıları ve kullanıcıları çoğalt.

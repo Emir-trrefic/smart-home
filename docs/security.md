@@ -1,83 +1,70 @@
 # Güvenlik
 
-Evin cihazlarını kontrol eden ve evin planını saklayan bir sistem. İki şey korunuyor: **fiziksel kontrol** (klima, robot, kilit gibi cihazlar) ve **mahremiyet** (evin yerleşimi, kullanım alışkanlıkları).
+Çok kullanıcılı bir sistem: korunan şeyler **fiziksel kontrol** (klima, kalorifer, robot, TV), **mahremiyet** (evin yerleşimi, kullanım izi) ve **kiracı sınırı** (bir kullanıcının başkasının mekânına erişememesi).
 
 ## Tehdit modeli
 
 | # | Tehdit | Önlem |
 |---|---|---|
-| T1 | İnternetten gelen yetkisiz erişim | HA internete açılmaz. Uzaktan erişim yalnızca Tailscale. Router'da port açılmaz. Sunucu varsayılan olarak yalnızca `127.0.0.1` dinler. |
-| T2 | Çalınan veya tahmin edilen parola | Parolalar scrypt ile saklanır, en az 12 karakter. Giriş uç noktasında hız sınırı. Kullanıcı yokken de aynı sürede hash hesaplanır (kullanıcı adı sızdırmaz). |
-| T3 | Çalınan erişim anahtarı | Kısa ömürlü JWT (15 dk), sabit algoritma (HS256), `iss` ve `aud` kontrolü. |
-| T4 | İstemciden keyfi cihaz komutu | Komut izinli listesi. Cihaz türü başına izinli komutlar ve değer aralıkları (ör. klima 16-30 °C). Bilinmeyen komut reddedilir. |
-| T5 | Yetki yükseltme | Roller: `owner`, `member`, `guest`. Her komut rol ve cihaz türüne göre kontrol edilir. |
-| T6 | HA token'ının sızması | Token yalnızca sunucu ortam değişkeninde. Depoya yazılmaz, istemciye gönderilmez, günlüğe düşmez. |
-| T7 | Kötü niyetli tarama dosyası | Katı şema doğrulama (tip, uzunluk, sınırlar), istek gövdesi boyut sınırı. Dosya içeriği çalıştırılmaz. |
-| T8 | İlk kurulumda sahiplik kapma | İlk `owner` yalnızca sunucuda tanımlı tek seferlik `BOOTSTRAP_TOKEN` ile oluşturulur. Kullanıcı varsa uç nokta kapanır. |
-| T9 | Hata mesajlarından bilgi sızması | Genel hata mesajları, ayrıntı yalnızca sunucu günlüğünde. |
-| T10 | Bağımlılık zinciri saldırısı | Kilit dosyası, Dependabot, CI'da gizli bilgi taraması. |
-| T11 | Veri kaybı veya gizlilik | Veri evdeki sunucuda tutulur, üçüncü taraf buluta gitmez. Yedekler şifreli olmalı (planlı). |
+| T1 | Cihaz sistemlerine internetten doğrudan erişim | İstemciler yalnızca gateway ile konuşur. Cihaz sistemi hiçbir istemciye açılmaz. Gerçek bağlantı evden dışarı doğru kurulacak (bridge, planlı). |
+| T2 | Parola tahmini veya çalınması | scrypt ile saklama, en az 12 karakter. Giriş, kayıt, kurulum ve davet kabulü uçlarında sıkı hız sınırı (dakikada 5). Kullanıcı yokken de aynı sürede hash hesaplanır (kullanıcı adı zamanlamayla sızmaz). |
+| T3 | Çalınan erişim belirteci | 15 dakika ömürlü JWT, sabit algoritma (HS256), `iss` ve `aud` kontrolü, `alg:none` reddi. |
+| T4 | İstemciden serbest cihaz komutu | Komut kataloğu: türe özgü komutlar, katı parametre sınırları, bilinmeyen alan reddi. Kalorifer 5-28 °C, TV'de içerik komutları yok. |
+| T5 | Yetki yükseltme | Roller mekân başına. `owner` davetle verilemez. Misafir yalnızca ışık. Rol her istekte üyelikten okunur (belirteçte rol yok). |
+| T6 | **Kiracılar arası erişim (IDOR)** | Her kaynak mekâna bağlı. Her mekân rotası önce üyeliği yükler, üye olmayana 404 verir (mekânın varlığı sızmaz). Cihaz yalnızca çağıranın mekânında aranır, başka mekânın cihaz kimliği çalışmaz. Testlerle doğrulanıyor. |
+| T7 | **SSRF** (sunucunun kullanıcı adresine istek atması) | Sunucu kullanıcı kaynaklı hiçbir URL'ye istek atmaz. Mekân bağlantıları yalnızca kod içinden bağlanır, bridge ileride evden dışarı doğru bağlanır. |
+| T8 | Cihaz kaydıyla başka varlığı kontrol etme (ışık diye kilit kaydı) | Kayıtta tür ile sağlayıcı alanı eşleşmesi zorunlu, yetenekler katalogdan olmalı. HA'ya giden `entity_id` her zaman sunucudaki kayıttan gelir, istemci parametresi ezemez. |
+| T9 | Davet kötüye kullanımı | 192 bit rastgele kod, yalnızca SHA-256 özeti saklanır, tek kullanımlık, 72 saat, mekân başına en fazla 20 aktif davet ve 20 üye. |
+| T10 | Kötü niyetli tarama dosyası | Katı şema (tip, aralık, uzunluk, bilinmeyen alan reddi), 5 MB gövde sınırı, içerik hiç çalıştırılmaz. |
+| T11 | İlk kurulumda hesap kapma | İlk hesap yalnızca sunucuda tanımlı tek seferlik belirteçle ve hiç kullanıcı yokken açılır. Belirteç sabit sürede karşılaştırılır. |
+| T12 | Hata mesajından bilgi sızması | Genel hata gövdeleri, ayrıntı yalnızca sunucu günlüğünde. İstek başlığındaki `Authorization` günlüğe yazılmaz. |
+| T13 | Bağımlılık zinciri | CI'da gizli bilgi taraması, Dependabot. Kilit dosyası henüz yok. |
+| T14 | Bellek ve kaynak tüketimi | Mekân, üye, davet, cihaz sınırları, gövde boyutu sınırları, genel hız sınırı. |
+| T15 | Mahremiyet ve KVKK | Adres ve konum tutulmaz, günlüklerde komut parametreleri yok. [privacy.md](privacy.md) |
+| T16 | Bridge'in ele geçirilmesi (planlı) | Mekân başına ayrı, iptal edilebilir bridge belirteci. Tasarım ve inceleme bridge yazılırken yapılacak. |
 
 ## Kimlik doğrulama
 
-- **Kullanıcı:** kullanıcı adı + parola → kısa ömürlü JWT. Planlı: dönen yenileme belirteci ve passkey desteği.
-- **Tarayıcı uygulaması eşleşmesi (planlı):** Sunucu tek kullanımlık, kısa ömürlü bir eşleşme kodu (QR) üretir. Uygulama kodu verip cihaz belirteci alır. Cihaz belirteci yalnızca tarama yüklemeye yetkilidir ve iptal edilebilir.
+- Kullanıcı adı ve parola ile giriş, 15 dakikalık erişim belirteci.
+- Hesap açma: ilk hesap tek seferlik kurulum belirteciyle, diğerleri mekân sahibinin daveti ile. Açık kayıt, e-posta doğrulama, parola sıfırlama, yenileme belirteci ve passkey **henüz yok**.
+- Belirteç yalnızca kimlik taşır. Üyelikten çıkarılan kişi, belirteci geçerli olsa bile mekâna erişemez.
 
-## Yetkilendirme
+## Bilinen eksikler ve zayıflıklar (dürüst liste)
 
-| Rol | Yapabilecekleri |
-|---|---|
-| `owner` | Her şey: kullanıcı ve cihaz yönetimi, tarama, tüm cihazları kontrol |
-| `member` | Tarama yükleme, cihazları kontrol |
-| `guest` | Yalnızca ışık kontrolü |
+- **Depolama bellekte:** Sunucu yeniden başlayınca her şey silinir. Kalıcı ve şifreli depolama yok.
+- **Hız sınırı süreç içi:** Tek sunucuda çalışır. Birden çok örnek veya ters vekil (reverse proxy) arkasında `trustProxy` ve ortak bir sayaç deposu gerekir. Şu an `trustProxy` kapalı, vekil arkasında tüm istemciler tek IP görünür.
+- **Hesap devre dışı bırakma yok:** Parola değişince veya hesap kapanınca verilmiş belirteçler süresi dolana kadar (en çok 15 dk) geçerli kalır. Mekân erişimi ise üyelikten anında kesilir.
+- **Kullanıcı adı sorgulanabilir:** `/auth/register` alınmış kullanıcı adına 409 verir. Davet kodu ister ve hız sınırlıdır ama tamamen kapatılmış değil.
+- **Denetim günlüğü yalnızca sunucu günlüğüne yazılıyor**, kalıcı ve sorgulanabilir bir kayıt değil.
+- **TLS** sunucunun dışında (ters vekil veya barındırma) sağlanmalı, sunucu kendisi TLS sonlandırmaz.
+- Güvenlik incelemesi veya sızma testi yapılmadı.
 
-Roller basit tutuldu. Oda bazlı yetki (ör. misafir yalnızca salonu kontrol eder) planlı.
-
-## Komut politikası
-
-`server/src/policy/commands.ts` içinde. İstemci HA servis adı göndermez, yalnızca anlamlı bir komut gönderir:
-
-| Cihaz türü | Komut | Parametre sınırı |
-|---|---|---|
-| `light` | `turn_on`, `turn_off` | parlaklık 0-255, renk 0-255 x3 |
-| `switch` | `turn_on`, `turn_off` | yok |
-| `climate` | `set_hvac_mode` | `off, cool, heat, dry, fan_only, auto` |
-| `climate` | `set_temperature` | 16-30 |
-| `vacuum` | `start`, `pause`, `return_to_base` | yok |
-
-Sunucu bu komutu HA servis çağrısına çevirir. Alan adı, servis adı ve entity kimliği biçim kontrolünden geçer, böylece URL yolu enjeksiyonu mümkün olmaz.
-
-## Gizli bilgi yönetimi
-
-- Gizli bilgiler `.env` ile verilir, `.gitignore` içindedir. Şablon: `server/.env.example`.
-- `JWT_SECRET` en az 32, `BOOTSTRAP_TOKEN` en az 24 karakter olmalı. Sunucu aksi halde açılmaz.
-- CI'da gizli bilgi taraması çalışır.
-
-## Durum tablosu
+## Durum
 
 | Önlem | Durum |
 |---|---|
-| Parola hash (scrypt), yapılandırma doğrulama | Kodda, testler çalıştırıldı ve geçti |
-| Komut izinli listesi ve rol izinleri (`policy`) | Kodda, testler çalıştırıldı ve geçti |
-| Tarama şeması doğrulama | Kodda, testler çalıştırıldı ve geçti |
-| HA REST istemcisi | Kodda, sahte fetch ile testler geçti, gerçek HA ile denenmedi |
-| Kısa ömürlü JWT (imza, süre, `alg:none` reddi) | Kodda, testler GitHub Actions'ta geçti |
-| HTTP uçları: ilk kurulum belirteci, giriş, hız sınırı, güvenlik başlıkları, rol kontrolü | Kodda, testler GitHub Actions'ta geçti |
+| Parola hash, belirteç, yapılandırma doğrulama | Kodda, testli |
+| Komut kataloğu, rol izinleri, parametre sınırları | Kodda, testli |
+| Kiracı izolasyonu (üyelik kapısı, mekân kapsamlı cihaz ve tarama) | Kodda, testli |
+| Davetle katılım, davet sınırları, üye çıkarma | Kodda, testli |
+| Cihaz kaydında tür ve alan eşleşmesi | Kodda, testli |
+| Tarama şeması doğrulama | Kodda, testli |
+| Giriş hız sınırı, güvenlik başlıkları, hata gizleme | Kodda, testli |
+| HA komut çevirisi ve REST istemcisi | Kodda, sahte `fetch` ile testli. **Gerçek HA ile denenmedi.** |
+| Kalıcı veritabanı, şifreli saklama, yedek | Planlı |
+| Bridge aracısı, olay akışı (WebSocket, push) | Planlı |
+| Açık kayıt, e-posta doğrulama, parola sıfırlama, yenileme belirteci, passkey | Planlı |
+| Kalıcı denetim günlüğü | Planlı |
+| Hesap ve mekân silme | Planlı |
+| TLS ve dağıtım güvenliği | Dağıtım aşamasında |
 
-> Tip kontrolü ve tüm testler GitHub Actions'ta yeşil (`.github/workflows/ci.yml`, commit `c8d7087`). Testler birim ve `inject` tabanlı entegrasyon testleridir. Gerçek Home Assistant, gerçek ağ ve gerçek cihazla denenmedi, güvenlik incelemesi veya sızma testi yapılmadı.
-| Kalıcı veritabanı | Planlı (şu an bellekte) |
-| Yenileme belirteci, passkey | Planlı |
-| Cihaz eşleşmesi (QR) | Planlı |
-| WebSocket ve HA olay akışı | Planlı |
-| Denetim günlüğü | Planlı |
-| TLS (Tailscale sertifikası) | Dağıtım aşamasında |
-| Şifreli yedek | Planlı |
+> Testler GitHub Actions'ta çalışıyor ve yeşil (`.github/workflows/ci.yml`). Birim testleri ve sahte sağlayıcıyla yapılan uçtan uca HTTP testleridir. Gerçek ağ, gerçek cihaz veya gerçek yük altında denenmedi.
 
 ## Dağıtım için kontrol listesi
 
-- [ ] HA yalnızca ev ağından ve sunucudan erişilebilir
-- [ ] Sunucu internete doğrudan açık değil, uzaktan erişim Tailscale ile
-- [ ] Cihazlar ayrı IoT ağında
-- [ ] `JWT_SECRET` ve `BOOTSTRAP_TOKEN` rastgele üretildi
-- [ ] İlk kurulumdan sonra `BOOTSTRAP_TOKEN` kaldırıldı veya değiştirildi
-- [ ] Sunucu ve HA güncel
+- [ ] Sunucu TLS arkasında, ters vekil doğru `trustProxy` ayarıyla
+- [ ] `JWT_SECRET` ve `BOOTSTRAP_TOKEN` rastgele üretildi, ilk hesaptan sonra `BOOTSTRAP_TOKEN` değiştirildi
+- [ ] Kalıcı veritabanı ve şifreli yedek
+- [ ] Hız sınırı için ortak sayaç deposu (birden çok örnek varsa)
+- [ ] Günlük saklama süresi belirlendi (bkz. privacy.md)
+- [ ] Bağımlılıklar güncel, kilit dosyası var
