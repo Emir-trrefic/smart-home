@@ -5,7 +5,7 @@ Kullanıcıların hangi marka cihazı olduğu belli değil. Bu yüzden tek bir m
 | Yol | Nasıl çalışır | Durum | Dikkat |
 |---|---|---|---|
 | **Home Assistant + bridge** | Evde HA, yanında bizim bridge aracısı. Bridge buluta dışarı doğru bağlanır. | HA komut çeviri katmanı kodda ve testli. **Bridge yazılmadı.** | Kullanıcının bir HA kurması gerekir, teknik kullanıcıya uygun. Geniş marka kapsamı. |
-| **Matter, telefondan doğrudan** | iOS'ta MatterSupport çerçevesi ile cihaz kendi ekosistemimize eklenir. Android'de Google Home APIs. | Araştırıldı, kod yok. | iOS için bir uygulama uzantısı (extension) ve yetkilendirmeler gerekir, Expo Go'da çalışmaz, özel derleme ister. Google Home APIs erişimi bekleme listesi ve sertifikasyon ister (2024 duyurusu, güncel durumu doğrulanmadı). |
+| **Matter, telefondan doğrudan** | iOS'ta MatterSupport çerçevesi ile cihaz kendi ekosistemimize eklenir. Android'de Google Home APIs. | Araştırıldı, kod yok. | iOS için bir uygulama uzantısı (extension) ve yetkilendirmeler gerekir, yerel iOS uygulamasında eklenir. Google Home APIs erişimi bekleme listesi ve sertifikasyon ister (2024 duyurusu, güncel durumu doğrulanmadı). |
 | **Bulut sağlayıcılar** (Tuya, SmartThings, Google Home vb.) | Kullanıcı hesabını OAuth ile bağlar, sunucu sağlayıcı API'sini çağırır. | **Doğrulanmadı.** Tuya araştırması işe yarar sonuç vermedi, SmartThings dokümanı açılmadı. | Her sağlayıcının kendi onay süreci ve kullanım koşulları var, araştırılması gerekir. |
 
 ## Neden önce Home Assistant?

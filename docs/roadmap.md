@@ -9,11 +9,13 @@
 - [x] Sunucu: kimlik, mekân başına üyelik ve roller, davetle katılım, kiracı izolasyonu, cihaz kaydı, komut çözümü, tarama yükleme
 - [x] CI: tip kontrolü, testler, gizli bilgi taraması
 
-## Aşama 1: mobil temel
+## Aşama 1: iOS temel
 
-- [ ] **Karar:** mobil çatı onayı (Expo önerisi, bkz. `apps/mobile/README.md`) ve derleme yolu (EAS bulut derlemesi ve hesaplar)
-- [ ] **3D deneme (spike):** gerçek iPhone ve Android'de react-three-fiber ile örnek ev sahnesi, kare hızı ve dokunma ölçümü
-- [ ] Mobil iskelet: giriş, mekân listesi, mekân görünümü, cihaz paneli (yeteneklerden çizilen kontroller), üyeler ve davet
+- [x] Karar: iOS yerel Swift (karar #11)
+- [x] Sunucu: `GET /places/:id/scans/latest` (3D görünüm için)
+- [x] iOS iskeleti: giriş, mekânlar, 3D görünüm, cihaz paneli, CI'da derleme ve test
+- [ ] Gerçek iPhone'da 3D sahne akıcılığı ölçümü
+- [ ] Üyeler ve davet ekranları, davetle hesap açma
 - [ ] Kalıcı veritabanı seçimi ve geçişi
 - [ ] `package-lock.json` ve CI'da `npm ci`
 
@@ -27,7 +29,7 @@
 
 ## Aşama 3: ev tarama ve 3D
 
-- [ ] iOS tarayıcı (`apps/scanner-ios`): RoomPlan, çok odalı birleştirme, JSON dışa aktarma
+- [ ] Tarayıcı (`apps/ios` içinde ayrı hedef): RoomPlan, çok odalı birleştirme, JSON dışa aktarma
 - [ ] Tarama sonrası düzenleme: oda adı, cihaz yerleşimi (yapay zeka önerisi opsiyonel)
 - [ ] 3D sahne çizimi, cihaz etkileşimi ve görsel geri bildirim (klima efekti, TV ışığı vb.)
 - [ ] Robot haritası ve konumu (özel geliştirme)

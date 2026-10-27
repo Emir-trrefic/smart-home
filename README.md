@@ -25,8 +25,8 @@ Ayrıntı: [docs/architecture.md](docs/architecture.md)
 |---|---|---|
 | `packages/domain/` | Ortak şemalar, komut kataloğu, rol izinleri | Kodda |
 | `server/` | Gateway sunucu | Kodda (bellek içi depolama) |
-| `apps/mobile/` | Mobil uygulama (Expo önerisi) | Plan ve deneme listesi |
-| `apps/scanner-ios/` | RoomPlan ile ev tarama | Planlı |
+| `apps/ios/` | iOS uygulaması (Swift, SwiftUI, SceneKit) | İskelet kodda: giriş, mekânlar, 3D görünüm, cihaz paneli |
+| RoomPlan tarayıcı | `apps/ios` içinde ayrı hedef olarak | Planlı |
 | `apps/web/` | Web arayüzü | Planlı |
 | `homeassistant/` | Home Assistant notları | Notlar |
 | `firmware/esp32/` | Kendi cihazlarımız (LED, IR verici) | Planlı |

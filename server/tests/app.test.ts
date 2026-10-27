@@ -522,5 +522,14 @@ test("tarama yükleme: geçerli kabul, geçersiz reddedilir, mekâna özel liste
   const listB = await env.app.inject({ url: `/places/${placeB}/scans`, headers: auth(owner.token) });
   assert.equal((listA.json() as unknown[]).length, 1);
   assert.equal((listB.json() as unknown[]).length, 0, "tarama yalnızca kendi mekânında görünür");
+
+  const latestA = await env.app.inject({ url: `/places/${placeA}/scans/latest`, headers: auth(owner.token) });
+  assert.equal(latestA.statusCode, 200);
+  assert.equal((latestA.json() as { version: number }).version, 1);
+  const latestB = await env.app.inject({ url: `/places/${placeB}/scans/latest`, headers: auth(owner.token) });
+  assert.equal(latestB.statusCode, 404, "planı olmayan mekân 404 verir");
+  const stranger = await createUser(env, "yabanci");
+  const latestStranger = await env.app.inject({ url: `/places/${placeA}/scans/latest`, headers: auth(stranger.token) });
+  assert.equal(latestStranger.statusCode, 404, "üye olmayan planı göremez");
   await env.app.close();
 });

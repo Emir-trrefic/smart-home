@@ -76,8 +76,8 @@ Bridge yazılana kadar sunucu cihaz komutlarına 409 `no_connection` döner. Bun
 |---|---|---|
 | Ortak alan modeli ve komut kataloğu | `packages/domain` | Kodda, testli |
 | Gateway sunucu | `server` | Kodda (bellek içi depolama), testli |
-| Mobil uygulama | `apps/mobile` | Plan ve deneme (spike) listesi, kod yok |
-| iOS tarayıcı | `apps/scanner-ios` | Planlı |
+| iOS uygulaması | `apps/ios` | İskelet kodda (giriş, mekânlar, 3D görünüm, cihaz paneli), tarama ve davet ekranı yok |
+| RoomPlan tarayıcı | `apps/ios` içinde ayrı hedef | Planlı |
 | Bridge aracısı | `apps/bridge` | Planlı |
 | Web arayüzü | `apps/web` | Planlı |
 | Home Assistant notları | `homeassistant` | Notlar |

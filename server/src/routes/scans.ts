@@ -21,6 +21,15 @@ export function registerScanRoutes(app: FastifyInstance, ctx: Ctx): void {
     return reply.code(201).send({ id: stored.id });
   });
 
+  /** Mekânın en son planı. Tüm üyeler (misafir dahil) 3D görünüm için okuyabilir. */
+  app.get("/places/:placeId/scans/latest", { preHandler: [authenticate, loadMembership] }, async (request, reply) => {
+    const placeId = request.membership?.placeId;
+    const all = placeId ? await ctx.scans.list(placeId) : [];
+    const latest = all[all.length - 1];
+    if (!latest) return reply.code(404).send({ error: "not_found" });
+    return latest.scan;
+  });
+
   app.get("/places/:placeId/scans", { preHandler: writers }, async (request) => {
     const placeId = request.membership?.placeId;
     const all = placeId ? await ctx.scans.list(placeId) : [];

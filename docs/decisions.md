@@ -55,11 +55,12 @@ Her karar: bağlam, karar, sonuç, **durum**. Durum değerleri: *geçerli*, *de�
 - **Sonuç:** Bridge yazılana kadar komutlar 409 `no_connection` döner. Bridge ayrı bir güvenlik incelemesi ister.
 - **Durum:** öneri (tasarım onayı, kod yok)
 
-## 11. Mobil çatı: Expo (React Native) + TypeScript
-- **Bağlam:** Mobil öncelikli. Aynı dilde ortak alan paketi, 3D için three.js ekosistemi (react-three-fiber), web ile kod paylaşımı isteniyor. RoomPlan tarayıcısı ve Matter ekleme zaten yerel (native) kod ister.
-- **Karar:** Expo ile React Native, 3D için react-three-fiber. Yerel kodlar (tarayıcı, Matter) yerel modül olarak eklenir. Karar, gerçek cihazda 3D performans denemesinden (spike) sonra kesinleşir.
-- **Alternatif:** Önce yalnızca iOS yerel (Swift) uygulama. RoomPlan ve Matter ile en kolay, ama Android ve web için kod paylaşımı yok.
-- **Durum:** öneri (spike ve onay bekliyor), ayrıntı: `apps/mobile/README.md`
+## 11. Mobil çatı: iOS yerel (Swift, SwiftUI, SceneKit)
+
+- **Karar:** İlk mobil uygulama yalnızca iOS ve yerel Swift. 3D için SceneKit, tarama için RoomPlan, ileride cihaz ekleme için MatterSupport; hepsi Apple'ın kendi çerçeveleri. Android sonraya, gerekirse ayrı uygulama.
+- **Gerekçe:** Kullanıcı iOS'u hedefledi. RoomPlan zaten yalnızca iOS'ta var, Matter ekleme de yerel uzantı ister. Tek platform, köprü katmanı ve üçüncü taraf 3D motoru riskini kaldırır.
+- **Ödünleşim:** Android ve web ayrı iş; sunucu sözleşmesi ve `packages/domain` ortak kalır. Önceki Expo önerisi bırakıldı.
+- **Durum:** karar verildi, iskelet kodda (`apps/ios`), 3D performansı gerçek cihazda ölçülmedi.
 
 ## 12. Davetle katılım, açık kayıt sonra
 - **Bağlam:** Açık kayıt e-posta doğrulaması, kötüye kullanım koruması ve KVKK metinleri ister.
